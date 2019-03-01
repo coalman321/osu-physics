@@ -1,21 +1,19 @@
 from vsm_temp_controller import *
+from k2400_isource import K2400
+from k2182A_nvmeter import K2182A
 
 fname = "C:/temp/work/filename.csv"
 
-print("loading visa driver")
-rm = visa.ResourceManager()  # TODO add all resource ID's
-temp_control = rm.open_resource('GPIB0::##::INSTR')  # VSM Heater controller
-i_source = rm.open_resource('GPIB0::##::INSTR')  # keithley 2400 current source
-vxx = rm.open_resource('GPIB0::##::INSTR')  # keithley 2182A
-vxy = rm.open_resource('GPIB0::##::INSTR')  # keithley 2182A
+print("loading device drivers")
+#  temp_control = VsmTempController(gpib_id='GPIB0::##::INSTR')  # VSM Heater controller
+#  i_source = K2400(gpib_id='GPIB0::##::INSTR', current=0)  # keithley 2400 current source
+nvm = K2182A(gpib_id='GPIB0::##::INSTR', source=1)  # keithley 2182A
+for x in range(100):
+    time.sleep(.25)
+    print(nvm.get_last_measurement())
 
-print("Temperature controller information: {}".format(temp_control.query("*IDN?")))
-print("Current Source information: {}".format(i_source.query("*IDN?")))
-print("V XX meter information: {}".format(vxx.query("*IDN?")))
-print("V XY meter information: {}".format(vxy.query("*IDN?")))
-print("configuring 340 temperature controller")
-config_340_controller(temp_control)
-print("instrument configured! current temperature: {}°K".format(read_temp(temp_control)))
+
+
 
 
 
