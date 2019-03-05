@@ -1,11 +1,12 @@
-import visa
+import pyvisa
 
 
 class K2182A:
 
     #  source can be 1 or 2, 0 is internal temp
-    def __init__(self, gpib_id, source=1):
-        self.meter = visa.ResourceManager().open_resource(gpib_id)
+    def __init__(self, gpib_id, library:str, source=1):
+        self.meter = pyvisa.highlevel.ResourceManager(library).open_resource(gpib_id)
+        print(self.meter.query("*IDN?"))
 
     #  unused
     def config_k2182a(self):

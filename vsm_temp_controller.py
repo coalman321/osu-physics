@@ -7,10 +7,12 @@ k_epsilon = 1.0E-3  # value used for an approximately equals statement
 class VsmTempController:
 
     #  loop: control loop, can be 0 or 1
-    def __init__(self, gpib_id, loop=1):
-        self.temp_controller = visa.ResourceManager().open_resource(gpib_id)
-        self.config_340_controller()
+    def __init__(self, gpib_id:str, library:str,  loop=1):
+        self.temp_controller = visa.ResourceManager(library).open_resource(gpib_id)
+        print(self.temp_controller.query("*IDN?"))
         self.loop = loop
+        #self.config_340_controller()
+
 
     #  controller_units: 1 is kelvin, 2 is celsius, 3 is sensor units
     #  sensor_input can be A or B
