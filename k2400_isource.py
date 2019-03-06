@@ -52,3 +52,6 @@ class K2400:
         """
         self.isource.write(":SOUR{}:CURR:LEV:IMM:AMPL {}".format(self.source, current))
         self.enable(state)
+
+    def close(self):
+        self.isource.close()

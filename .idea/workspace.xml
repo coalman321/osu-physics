@@ -2,8 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="6baa946a-1f17-48e3-b3c2-9ae0410a1625" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/k2182A_nvmeter.py" beforeDir="false" afterPath="$PROJECT_DIR$/k2182A_nvmeter.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/k2400_isource.py" beforeDir="false" afterPath="$PROJECT_DIR$/k2400_isource.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/vsm_temp_controller.py" beforeDir="false" afterPath="$PROJECT_DIR$/vsm_temp_controller.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -21,20 +23,21 @@
           <entry key="project.open.time.3" value="1" />
           <entry key="project.open.time.4" value="5" />
           <entry key="project.open.time.6" value="1" />
-          <entry key="project.opened" value="8" />
+          <entry key="project.open.time.7" value="1" />
+          <entry key="project.opened" value="9" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
           <entry key="Python Console" value="114" />
-          <entry key="dummy" value="9" />
-          <entry key="py" value="7178" />
+          <entry key="dummy" value="22" />
+          <entry key="py" value="9946" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="PLAIN_TEXT" value="9" />
-          <entry key="Python" value="7292" />
+          <entry key="PLAIN_TEXT" value="22" />
+          <entry key="Python" value="10060" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
@@ -53,27 +56,28 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/main.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="391">
-              <caret line="23" lean-forward="true" selection-start-line="23" selection-end-line="23" />
+            <state relative-caret-position="136">
+              <caret line="68" column="10" selection-start-line="68" selection-start-column="10" selection-end-line="68" selection-end-column="10" />
               <folding>
                 <element signature="e#0#33#0" expanded="true" />
+                <marker date="1551900317147" expanded="true" signature="238:328" ph="..." />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/vsm_temp_controller.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-493">
-              <caret line="39" column="16" selection-start-line="39" selection-start-column="16" selection-end-line="39" selection-end-column="16" />
+            <state relative-caret-position="564">
+              <caret line="63" column="13" selection-start-line="63" selection-start-column="13" selection-end-line="63" selection-end-column="13" />
               <folding>
                 <element signature="e#0#11#0" expanded="true" />
-                <marker date="1551797192714" expanded="true" signature="122:421" ph="..." />
-                <marker date="1551797192714" expanded="true" signature="122:424" ph="..." />
+                <marker date="1551900317464" expanded="true" signature="122:420" ph="..." />
+                <marker date="1551900317464" expanded="true" signature="122:422" ph="..." />
               </folding>
             </state>
           </provider>
@@ -82,11 +86,11 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/k2400_isource.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="680">
-              <caret line="40" selection-start-line="40" selection-end-line="40" />
+            <state relative-caret-position="411">
+              <caret line="56" column="28" selection-start-line="56" selection-start-column="28" selection-end-line="56" selection-end-column="28" />
               <folding>
-                <marker date="1551796739993" expanded="true" signature="26:359" ph="..." />
-                <marker date="1551796739993" expanded="true" signature="388:389" ph="..." />
+                <marker date="1551896256204" expanded="true" signature="26:359" ph="..." />
+                <marker date="1551896256204" expanded="true" signature="388:389" ph="..." />
               </folding>
             </state>
           </provider>
@@ -95,10 +99,11 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/k2182A_nvmeter.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="425">
-              <caret line="25" column="76" selection-start-line="25" selection-start-column="76" selection-end-line="25" selection-end-column="76" />
+            <state relative-caret-position="408">
+              <caret line="24" column="41" selection-start-line="24" selection-start-column="41" selection-end-line="24" selection-end-column="41" />
               <folding>
-                <marker date="1551796828476" expanded="true" signature="29:30" ph="..." />
+                <element signature="e#0#13#0" expanded="true" />
+                <marker date="1551896255828" expanded="true" signature="41:42" ph="..." />
               </folding>
             </state>
           </provider>
@@ -119,15 +124,16 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/main.py" />
         <option value="$PROJECT_DIR$/k2400_isource.py" />
         <option value="$PROJECT_DIR$/k2182A_nvmeter.py" />
+        <option value="$PROJECT_DIR$/main.py" />
         <option value="$PROJECT_DIR$/vsm_temp_controller.py" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="-10" />
+    <option name="x" value="446" />
+    <option name="y" value="-20" />
     <option name="width" value="1040" />
     <option name="height" value="1090" />
   </component>
@@ -136,7 +142,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -144,34 +149,11 @@
               <item name="osu-physics" type="b2602c69:ProjectViewProjectNode" />
               <item name="osu-physics" type="462c0819:PsiDirectoryNode" />
             </path>
-            <path>
-              <item name="osu-physics" type="b2602c69:ProjectViewProjectNode" />
-              <item name="osu-physics" type="462c0819:PsiDirectoryNode" />
-              <item name="venv" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="osu-physics" type="b2602c69:ProjectViewProjectNode" />
-              <item name="osu-physics" type="462c0819:PsiDirectoryNode" />
-              <item name="venv" type="462c0819:PsiDirectoryNode" />
-              <item name="Lib" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="osu-physics" type="b2602c69:ProjectViewProjectNode" />
-              <item name="osu-physics" type="462c0819:PsiDirectoryNode" />
-              <item name="venv" type="462c0819:PsiDirectoryNode" />
-              <item name="Lib" type="462c0819:PsiDirectoryNode" />
-              <item name="site-packages" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="osu-physics" type="b2602c69:ProjectViewProjectNode" />
-              <item name="osu-physics" type="462c0819:PsiDirectoryNode" />
-              <item name="venv" type="462c0819:PsiDirectoryNode" />
-              <item name="Scripts" type="462c0819:PsiDirectoryNode" />
-            </path>
           </expand>
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -228,13 +210,14 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-7" y="-7" width="1550" height="878" extended-state="6" />
+    <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.15465961" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.17118308" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.32885906" />
-      <window_info anchor="bottom" id="Run" order="2" weight="0.32885906" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.19194631" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -262,45 +245,47 @@
     <entry file="file://$PROJECT_DIR$/venv/Lib/site-packages/visa.py">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/main.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="391">
-          <caret line="23" lean-forward="true" selection-start-line="23" selection-end-line="23" />
-          <folding>
-            <element signature="e#0#33#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/k2400_isource.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="680">
-          <caret line="40" selection-start-line="40" selection-end-line="40" />
+        <state relative-caret-position="411">
+          <caret line="56" column="28" selection-start-line="56" selection-start-column="28" selection-end-line="56" selection-end-column="28" />
           <folding>
-            <marker date="1551796739993" expanded="true" signature="26:359" ph="..." />
-            <marker date="1551796739993" expanded="true" signature="388:389" ph="..." />
+            <marker date="1551896256204" expanded="true" signature="26:359" ph="..." />
+            <marker date="1551896256204" expanded="true" signature="388:389" ph="..." />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/k2182A_nvmeter.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="425">
-          <caret line="25" column="76" selection-start-line="25" selection-start-column="76" selection-end-line="25" selection-end-column="76" />
+        <state relative-caret-position="408">
+          <caret line="24" column="41" selection-start-line="24" selection-start-column="41" selection-end-line="24" selection-end-column="41" />
           <folding>
-            <marker date="1551796828476" expanded="true" signature="29:30" ph="..." />
+            <element signature="e#0#13#0" expanded="true" />
+            <marker date="1551896255828" expanded="true" signature="41:42" ph="..." />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/vsm_temp_controller.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-493">
-          <caret line="39" column="16" selection-start-line="39" selection-start-column="16" selection-end-line="39" selection-end-column="16" />
+        <state relative-caret-position="564">
+          <caret line="63" column="13" selection-start-line="63" selection-start-column="13" selection-end-line="63" selection-end-column="13" />
           <folding>
             <element signature="e#0#11#0" expanded="true" />
-            <marker date="1551797192714" expanded="true" signature="122:421" ph="..." />
-            <marker date="1551797192714" expanded="true" signature="122:424" ph="..." />
+            <marker date="1551900317464" expanded="true" signature="122:420" ph="..." />
+            <marker date="1551900317464" expanded="true" signature="122:422" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/main.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="136">
+          <caret line="68" column="10" selection-start-line="68" selection-start-column="10" selection-end-line="68" selection-end-column="10" />
+          <folding>
+            <element signature="e#0#33#0" expanded="true" />
+            <marker date="1551900317147" expanded="true" signature="238:328" ph="..." />
           </folding>
         </state>
       </provider>
