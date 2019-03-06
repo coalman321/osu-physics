@@ -24,9 +24,11 @@ fname = "C:/temp/work/{}.csv".format(sname)
 # Currents in mA
 currents = [-2500, 2500]
 # time between voltage readings in s
-reading_delay = .25
+reading_delay = 0.2
 # Temperatures in K
 temps = sweep(80, 300, 20)
+# wait for stability in s
+temp_stable_wait = 2 * 60
 # End Temperature in K
 end_temp = 300
 
@@ -65,7 +67,7 @@ i_source = K2400(gpib_id='GPIB0::24::INSTR', library=library, current=0)  # keit
 nvm = K2182A(gpib_id='GPIB0::08::INSTR', library=library, source=1)  # keithley 2182A
 print("Driver loading succeeded, beginning data capture")
 
-print("none shall Pass")
+print("WARNING Prevent from running measurement \nremove this block when ready")
 exit(-100)
 
 for temp in temps:
@@ -73,6 +75,7 @@ for temp in temps:
     # Execute measurement
     print("Measurement {} of {} \nRamping to Temp: {}°K".format(progress, len(temps), temp))
     temp_control.wait_for_temp(temp)
+    time.sleep(temp_stable_wait)
     temperature = 0
     resistance = 0
     for current in currents:
@@ -94,7 +97,7 @@ for temp in temps:
     plt.plot(res_avg, temp_avg)
     plt.title("R vs T for {}".format(sname))
     plt.draw()
-    plt.pause(0.01)
+    plt.pause(reading_delay)
 
     # Update progress
     progress += 1
