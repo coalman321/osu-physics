@@ -32,12 +32,11 @@ temp_stable_wait = 2 * 60
 # End Temperature in K
 end_temp = 300
 
-print("Recording to file:")
-print(fname)
-print("Executing Temperatures (K):")
-print(temps)
-print("Executing Currents (mA):")
-print(currents)
+# Print configuration data
+print("Executing measurement for sample {}".format(sname))
+print("Recording to file: {}".format(fname))
+print("Executing Temperatures (K): {}".format(temps))
+print("Executing Currents (mA): {}".format(currents))
 
 # User Data confirmation
 user_input = input("Proceed with measurement? Y/N\n")
