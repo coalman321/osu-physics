@@ -1,0 +1,7 @@
+from GUI import ControlInterface
+import wx
+
+app = wx.App()
+frm = ControlInterface(["A", "B", "C"], None, title='Hello World 2')
+frm.Show()
+app.MainLoop()

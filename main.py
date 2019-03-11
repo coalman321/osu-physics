@@ -51,7 +51,12 @@ currents[:] = [x / 1000 for x in currents]
 file = open(fname, 'a+')
 
 # Populate data file header
-file.write("R, T\n")
+header = "R, T, "
+for i in range(len(currents)):
+    header += "v{}, ".format(i)
+header += "\n"
+
+file.write(header)
 file.flush()
 
 # Enable Matplotlib interactivity
@@ -59,15 +64,15 @@ plt.ion()
 
 progress = 1
 
+print("WARNING Prevent from running measurement \nremove this block when ready")
+exit(-100)
+
 # begin loading device drivers
 print("loading device drivers")
 temp_control = VsmTempController(gpib_id='GPIB0::12::INSTR', library=library,)  # VSM Heater controller
 i_source = K2400(gpib_id='GPIB0::24::INSTR', library=library, current=0)  # keithley 2400 current source
 nvm = K2182A(gpib_id='GPIB0::08::INSTR', library=library, source=1)  # keithley 2182A
 print("Driver loading succeeded, beginning data capture")
-
-print("WARNING Prevent from running measurement \nremove this block when ready")
-exit(-100)
 
 for temp in temps:
 
