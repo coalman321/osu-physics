@@ -7,7 +7,7 @@ from k2182A_nvmeter import K2182A
 
 # DO NOT MODIFY ON THIS COMPUTER
 library = 'C:\\Windows\\System32\\visa64.dll'
-k_epsilon = 1.0E-1  # value used for an approximately equals statement
+k_epsilon = 1.0E0  # value used for an approximately equals statement
 
 def sweep(start, end, step):
     arr = []
@@ -33,19 +33,10 @@ temp_stable_wait = 2 * 60
 # End Temperature in K
 # end_temp = 300
 
-# Print configuration data
-print("Executing measurement for sample {}".format(sname))
-print("Recording to file: {}".format(fname))
-print("Executing Temperatures (K): {}".format(temps))
-print("Executing Currents (uA): {}".format(currents))
-
-# Adjust currents from uA to A
-currents[:] = [x / 1000000 for x in currents]
-
 class MyFrame(wx.Frame):
 
     def __init__(self, parent, id, title):
-        wx.Frame.__init__(self, parent, id, title, size=(1000, 800))
+        wx.Frame.__init__(self, parent, id, title, size=(1300, 500))
 
         self.res_manager = visa.ResourceManager(library)
         self.instrument_list = self.res_manager.list_resources()
@@ -70,33 +61,59 @@ class MyFrame(wx.Frame):
         self.curr_ID_selector = wx.ComboBox(panel, choices=self.instrument_list,
                                        size=(200, 30), pos=(0, 160), style=wx.CB_READONLY)
 
-        self.temp_readout = wx.TextCtrl(panel, size=(200, 30), pos=(300, 60), style=wx.TE_READONLY)
-        self.heater_readout = wx.TextCtrl(panel, size=(200, 30), pos=(300, 100), style=wx.TE_READONLY)
-        self.step_readout = wx.TextCtrl(panel, size=(200, 30), pos=(300, 140), style=wx.TE_READONLY)
+        self.step_readout = wx.TextCtrl(panel, size=(200, 30), pos=(0, 280), style=wx.TE_READONLY, value="current temp {}K   Desired {}K".format(293, 293))
+        self.temp_readout = wx.TextCtrl(panel, size=(200, 30), pos=(0, 320), style=wx.TE_READONLY, value="Heater Power: {:3.2f}%".format(0))
+        self.heater_readout = wx.TextCtrl(panel, size=(200, 30), pos=(0, 360), style=wx.TE_READONLY, value="Step {} of {}".format(0, 0))
+
+        self.console = wx.TextCtrl(panel, size=(500, 400), pos=(250, 50), style=wx.TE_READONLY|wx.TE_MULTILINE)
 
         self.connect_button = wx.Button(panel, -1, "Test Connections", pos=(50, 190), size=(100, 30))
         self.connect_button.Bind(wx.EVT_BUTTON, self.test_intruments)
         self.start_button = wx.Button(panel, -1, "Start Measurement", pos=(40, 230), size=(120, 30))
         self.start_button.Bind(wx.EVT_BUTTON, self.run_measurement)
 
-    def append_log(self, to_log: str):
-        print(to_log)
-
     def test_intruments(self, aaa):
-        temp = self.res_manager.open_resource(self.instrument_list[self.temp_ID_selector.GetCurrentSelection()])
-        self.append_log("Temperature controller ID: " + temp.query("*IDN?"))
-        temp.close()
-        volt = self.res_manager.open_resource(self.instrument_list[self.volt_ID_selector.GetCurrentSelection()])
-        self.append_log("Nanovoltmeter ID: " + volt.query("*IDN?"))
-        volt.close()
-        curr = self.res_manager.open_resource(self.instrument_list[self.curr_ID_selector.GetCurrentSelection()])
-        self.append_log("Current Source ID: " + curr.query("*IDN?"))
-        curr.close()
+        if not self.temp_ID_selector.GetCurrentSelection() == -1:
+            temp = self.res_manager.open_resource(self.instrument_list[self.temp_ID_selector.GetCurrentSelection()])
+            self.append_log("Temperature controller ID: " + temp.query("*IDN?"))
+            temp.close()
+        else:
+            self.append_log("Temperature controller not selected")
+        if not self.volt_ID_selector.GetCurrentSelection() == -1:
+            volt = self.res_manager.open_resource(self.instrument_list[self.volt_ID_selector.GetCurrentSelection()])
+            self.append_log("Nanovoltmeter ID: " + volt.query("*IDN?"))
+            volt.close()
+        else:
+            self.append_log("Nano-voltmeter not selected")
+        if not self.volt_ID_selector.GetCurrentSelection() == -1:
+            curr = self.res_manager.open_resource(self.instrument_list[self.curr_ID_selector.GetCurrentSelection()])
+            self.append_log("Current Source ID: " + curr.query("*IDN?"))
+            curr.close()
+        else:
+            self.append_log("Current source not selected")
 
     def run_measurement(self, aaa):
+        instr_select = True
+        if self.temp_ID_selector.GetCurrentSelection() == -1:
+            self.append_log("Temperature controller not selected")
+            instr_select = False
+        if self.volt_ID_selector.GetCurrentSelection() == -1:
+            self.append_log("Nano-voltmeter not selected")
+            instr_select = False
+        if self.volt_ID_selector.GetCurrentSelection() == -1:
+            self.append_log("Current source not selected")
+            instr_select = False
+        if not instr_select:
+            return
         self.allow_measurement = True
         self.start_button.SetLabel("Stop Measurement")
         self.start_button.Bind(wx.EVT_BUTTON, self.stop_measurement)
+
+    def append_log(self, to_log: str):
+        self.console.AppendText(to_log + "\n")
+
+    def clear_log(self):
+        self.console.SetValue("")
 
     def stop_measurement(self, aaa):
         self.allow_measurement = False
@@ -128,14 +145,18 @@ class MainEventLoop(wx.GUIEventLoop):
         self.shouldExit = False
         self.blocked = False
         self.historic = False
+        self.init_ready = False
         self.state = -1
         self.t_arrived = float("inf")
         self.temp_index = 0
 
+        # Adjust currents from uA to A
+        currents[:] = [x / 1000000 for x in currents]
+
     def update_experiment(self):
         if self.frame.allow_measurement:
             if self.state is 0:
-                print("setting temperature to {}K".format(self.target_temp))
+                self.frame.append_log("setting temperature to {}K".format(self.target_temp))
                 self.temperature_controller.set_controller_enable(True)
                 # self.temperature_controller.temp_sel_set(self.target_temp)
                 self.state = 1
@@ -154,7 +175,7 @@ class MainEventLoop(wx.GUIEventLoop):
                     self.state = 2
 
             elif self.state is 2:
-                print("executing measurement")
+                self.frame.append_log("executing measurement")
                 # execute measurement
                 # TODO find way to not block thread on reads
                 temperature = 0
@@ -206,6 +227,7 @@ class MainEventLoop(wx.GUIEventLoop):
                 self.frame.step_readout.SetValue("Step {} of {}".format(self.temp_index+1, len(temps)))
 
             else:
+                self.frame.clear_log()
                 # uninitialized state
                 # open file
                 self.file = open(fname, 'a+')
@@ -226,7 +248,8 @@ class MainEventLoop(wx.GUIEventLoop):
                 self.target_temp = temps[self.temp_index]
                 self.state = 0
                 self.historic = True
-                print("drivers loaded succesfully")
+                self.frame.append_log("drivers loaded succesfully")
+
         elif self.historic:
             # measurement done shut everything off
             self.temperature_controller.temp_sel_set(600)
@@ -323,7 +346,17 @@ class MyApp(wx.App):
         # self.keepGoing = True
         return True
 
+    def append_log(self, to_log: str):
+        self.frame.append_log(to_log)
+
 
 app = MyApp(False)
+
+# Print configuration data
+app.append_log("Executing measurement for sample {}".format(sname))
+app.append_log("Recording to file: {}".format(fname))
+app.append_log("Executing Temperatures (K): {}".format(temps))
+app.append_log("Executing Currents (uA): {}".format(currents))
+
 app.MainLoop()
 

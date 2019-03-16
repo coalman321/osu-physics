@@ -2,12 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="6baa946a-1f17-48e3-b3c2-9ae0410a1625" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/notempmain.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/GUIMain.py" beforeDir="false" afterPath="$PROJECT_DIR$/GUIMain.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/k2182A_nvmeter.py" beforeDir="false" afterPath="$PROJECT_DIR$/k2182A_nvmeter.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/vsm_temp_controller.py" beforeDir="false" afterPath="$PROJECT_DIR$/vsm_temp_controller.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -34,13 +29,13 @@
           <entry key="GUIMain" value="72" />
           <entry key="Python Console" value="114" />
           <entry key="dummy" value="66" />
-          <entry key="py" value="15161" />
+          <entry key="py" value="16003" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
           <entry key="PLAIN_TEXT" value="66" />
-          <entry key="Python" value="15347" />
+          <entry key="Python" value="16189" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
@@ -107,14 +102,15 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/GUIMain.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="394">
-              <caret line="318" column="47" selection-start-line="318" selection-start-column="47" selection-end-line="318" selection-end-column="47" />
+            <state relative-caret-position="153">
+              <caret line="9" column="17" selection-start-line="9" selection-start-column="17" selection-end-line="9" selection-end-column="17" />
               <folding>
                 <element signature="e#0#9#0" expanded="true" />
-                <marker date="1552682067266" expanded="true" signature="149:151" ph="..." />
-                <marker date="1552682067266" expanded="true" signature="4057:4066" ph="..." />
-                <marker date="1552682067266" expanded="true" signature="4057:4226" ph="..." />
-                <marker date="1552682067266" expanded="true" signature="5044:10187" ph="..." />
+                <marker date="1552701901212" expanded="true" signature="149:151" ph="..." />
+                <marker date="1552701901212" expanded="true" signature="5001:5041" ph="..." />
+                <marker date="1552701901212" expanded="true" signature="5073:5082" ph="..." />
+                <marker date="1552701901212" expanded="true" signature="5073:5242" ph="..." />
+                <marker date="1552701901212" expanded="true" signature="6186:11417" ph="..." />
               </folding>
             </state>
           </provider>
@@ -326,7 +322,7 @@
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.32885906" />
-      <window_info anchor="bottom" id="Run" order="2" weight="0.4885906" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.4885906" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -432,16 +428,15 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/GUIMain.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="394">
-          <caret line="318" column="47" selection-start-line="318" selection-start-column="47" selection-end-line="318" selection-end-column="47" />
+        <state relative-caret-position="153">
+          <caret line="9" column="17" selection-start-line="9" selection-start-column="17" selection-end-line="9" selection-end-column="17" />
           <folding>
             <element signature="e#0#9#0" expanded="true" />
-            <marker date="1552682067266" expanded="true" signature="149:151" ph="..." />
-            <marker date="1552682067266" expanded="true" signature="4057:4066" ph="..." />
-            <marker date="1552682067266" expanded="true" signature="4057:4226" ph="..." />
-            <marker date="1552682067266" expanded="true" signature="5044:10187" ph="..." />
-            <marker date="1552682067266" expanded="true" signature="11798:12205" ph="..." />
-            <marker date="1552682067266" expanded="true" signature="12409:12415" ph="..." />
+            <marker date="1552701901212" expanded="true" signature="149:151" ph="..." />
+            <marker date="1552701901212" expanded="true" signature="5001:5041" ph="..." />
+            <marker date="1552701901212" expanded="true" signature="5073:5082" ph="..." />
+            <marker date="1552701901212" expanded="true" signature="5073:5242" ph="..." />
+            <marker date="1552701901212" expanded="true" signature="6186:11417" ph="..." />
           </folding>
         </state>
       </provider>
