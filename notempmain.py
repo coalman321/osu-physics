@@ -28,7 +28,7 @@ reading_delay = 1.0
 # Temperatures in K
 temps = sweep(80, 300, 20)
 # wait for stability in s
-temp_stable_wait = 2 * 60
+temp_stable_wait = 2
 # End Temperature in K
 # end_temp = 300
 
@@ -64,8 +64,13 @@ plt.ion()
 
 progress = 1
 
-# print("WARNING Prevent from running measurement \nremove this block when ready")
-# exit(-100)
+print(time.time())
+time.sleep(2)
+print(time.time())
+
+print("WARNING Prevent from running measurement \nremove this block when ready")
+exit(-100)
+
 
 # begin loading device drivers
 print("loading device drivers")
@@ -74,14 +79,14 @@ i_source = K2400(gpib_id='GPIB0::24::INSTR', library=library, current=0)  # keit
 nvm = K2182A(gpib_id='GPIB0::07::INSTR', library=library, source=1)  # keithley 2182A
 print("Driver loading succeeded, beginning data capture")
 
+print(temp_control.query_heater_power())
+
 for temp in temps:
 
     # Execute measurement
     print("Measurement {} of {} \nRamping to Temp: {}°K".format(progress, len(temps), temp))
-    temp_control.wait_for_temp(temp)
+    # temp_control.wait_for_temp(temp)
     time.sleep(temp_stable_wait)
-
-    # Run measurement
     temperature = 0
     resistance = 0
     voltage = []
@@ -93,7 +98,7 @@ for temp in temps:
         resistance += voltage[-1]/current
     i_source.enable(False)
 
-    # Calculate resistance and temperature average
+    # Calculate resistance and voltage average
     temp_avg = temperature / len(currents)
     res_avg = resistance / len(currents)
 
@@ -112,6 +117,8 @@ for temp in temps:
 
     # Update progress
     progress += 1
+
+# temp_control.temp_sel_set(end_temp)
 
 # Close instrument resources
 temp_control.close()

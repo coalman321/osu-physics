@@ -30,7 +30,7 @@ class K2182A:
 
         :return: returns the voltage in mV
         """
-        return self.meter.query("FETC?")
+        return float(self.meter.query("FETC?"))
 
     def close(self):
         self.meter.close()
