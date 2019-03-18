@@ -4,6 +4,10 @@ import time
 from vsm_temp_controller import VsmTempController
 from k2400_isource import K2400
 from k2182A_nvmeter import K2182A
+import matplotlib as mpl
+from matplotlib.backends.backend_wxagg import FigureCanvasWxAgg as FigureCanvas
+from matplotlib.backends.backend_wxagg import NavigationToolbar2WxAgg as NavigationToolbar
+import wx.lib.agw.aui as aui
 
 # DO NOT MODIFY ON THIS COMPUTER
 library = 'C:\\Windows\\System32\\visa64.dll'
@@ -21,9 +25,9 @@ def sweep(start, end, step):
 # Sample name
 sname = "XD326"
 # File to output data to
-fname = "C:/temp/work/{}DRYRUN.csv".format(sname)
+fname = "C:/temp/work/{}RANDOM_RESISTOR.csv".format(sname)
 # Currents in uA
-currents = [30, -30]
+currents = [3, -3] # 30, -30
 # time between voltage readings in s
 reading_delay = 1.0
 # Temperatures in K
@@ -36,41 +40,53 @@ temp_stable_wait = 2 * 60
 class MyFrame(wx.Frame):
 
     def __init__(self, parent, id, title):
-        wx.Frame.__init__(self, parent, id, title, size=(1300, 500))
+        wx.Frame.__init__(self, parent, id, title, size=(1300, 600))
 
         self.res_manager = visa.ResourceManager(library)
         self.instrument_list = self.res_manager.list_resources()
 
         self.allow_measurement = False
 
-        # custom
-        panel = wx.Panel(self)
+        self.menu_bar = wx.MenuBar()
+        self.page_menu = wx.Menu()
+        self.page_menu.Append(wx.NewId(), "Main Menu", "Main configuration menu", wx.ITEM_RADIO)
+        self.page_menu.Append(wx.NewId(), "Live Graph", "Live updated graph", wx.ITEM_RADIO)
+        self.menu_bar.Append(self.page_menu, "&Menu")
+        self.SetMenuBar(self.menu_bar)
 
-        self.header = wx.StaticText(panel, label="R vs. T Measurement Interface", pos=(0, 0))
+        # setup measurement panel & log
+        self.mainpanel = wx.Panel(self)
+        self.mainpanel.Show(True)
+
+        self.header = wx.StaticText(self.mainpanel, label="R vs. T Measurement Interface", pos=(0, 0))
         font = self.header.GetFont()
         font.PointSize += 10
         self.header.SetFont(font)
 
-        wx.StaticText(panel, label="Temperature Controller GPIB Address", pos=(0, 40))
-        self.temp_ID_selector = wx.ComboBox(panel, choices=self.instrument_list,
+        wx.StaticText(self.mainpanel, label="Temperature Controller GPIB Address", pos=(0, 40))
+        self.temp_ID_selector = wx.ComboBox(self.mainpanel, choices=self.instrument_list,
                                        size=(200, 30), pos=(0, 60), style=wx.CB_READONLY)
-        wx.StaticText(panel, label="Nanovoltmeter GPIB Address", pos=(0, 90))
-        self.volt_ID_selector = wx.ComboBox(panel, choices=self.instrument_list,
+        wx.StaticText(self.mainpanel, label="Nanovoltmeter GPIB Address", pos=(0, 90))
+        self.volt_ID_selector = wx.ComboBox(self.mainpanel, choices=self.instrument_list,
                                        size=(200, 30), pos=(0, 110), style=wx.CB_READONLY)
-        wx.StaticText(panel, label="Current Source GPIB Address", pos=(0, 140))
-        self.curr_ID_selector = wx.ComboBox(panel, choices=self.instrument_list,
+        wx.StaticText(self.mainpanel, label="Current Source GPIB Address", pos=(0, 140))
+        self.curr_ID_selector = wx.ComboBox(self.mainpanel, choices=self.instrument_list,
                                        size=(200, 30), pos=(0, 160), style=wx.CB_READONLY)
 
-        self.step_readout = wx.TextCtrl(panel, size=(200, 30), pos=(0, 280), style=wx.TE_READONLY, value="current temp {}K   Desired {}K".format(293, 293))
-        self.temp_readout = wx.TextCtrl(panel, size=(200, 30), pos=(0, 320), style=wx.TE_READONLY, value="Heater Power: {:3.2f}%".format(0))
-        self.heater_readout = wx.TextCtrl(panel, size=(200, 30), pos=(0, 360), style=wx.TE_READONLY, value="Step {} of {}".format(0, 0))
+        self.step_readout = wx.TextCtrl(self.mainpanel, size=(200, 30), pos=(0, 280), style=wx.TE_READONLY, value="Step {} of {}".format(0, 0))
+        self.temp_readout = wx.TextCtrl(self.mainpanel, size=(200, 30), pos=(0, 320), style=wx.TE_READONLY, value="current temp {}K   Desired {}K".format(293, 293))
+        self.heater_readout = wx.TextCtrl(self.mainpanel, size=(200, 30), pos=(0, 360), style=wx.TE_READONLY, value="Heater Power: {:3.2f}%".format(0))
 
-        self.console = wx.TextCtrl(panel, size=(500, 400), pos=(250, 50), style=wx.TE_READONLY|wx.TE_MULTILINE)
-
-        self.connect_button = wx.Button(panel, -1, "Test Connections", pos=(50, 190), size=(100, 30))
+        self.connect_button = wx.Button(self.mainpanel, -1, "Test Connections", pos=(50, 190), size=(100, 30))
         self.connect_button.Bind(wx.EVT_BUTTON, self.test_intruments)
-        self.start_button = wx.Button(panel, -1, "Start Measurement", pos=(40, 230), size=(120, 30))
+        self.start_button = wx.Button(self.mainpanel, -1, "Start Measurement", pos=(40, 230), size=(120, 30))
         self.start_button.Bind(wx.EVT_BUTTON, self.run_measurement)
+
+        self.console = wx.TextCtrl(self.mainpanel, size=(500, 400), pos=(250, 50), style=wx.TE_READONLY|wx.TE_MULTILINE)
+
+        # self.graphpanel = wx.Panel(self)
+        # self.graphpanel.Hide()
+
 
     def test_intruments(self, aaa):
         if not self.temp_ID_selector.GetCurrentSelection() == -1:
@@ -105,6 +121,7 @@ class MyFrame(wx.Frame):
             instr_select = False
         if not instr_select:
             return
+        self.clear_log()
         self.allow_measurement = True
         self.start_button.SetLabel("Stop Measurement")
         self.start_button.Bind(wx.EVT_BUTTON, self.stop_measurement)
@@ -157,9 +174,10 @@ class MainEventLoop(wx.GUIEventLoop):
         if self.frame.allow_measurement:
             if self.state is 0:
                 self.frame.append_log("setting temperature to {}K".format(self.target_temp))
-                self.temperature_controller.set_controller_enable(True)
+                # self.temperature_controller.set_controller_enable(True)
                 # self.temperature_controller.temp_sel_set(self.target_temp)
-                self.state = 1
+                # TODO SET BACK TO STATE 1 AFTER TEMP SET
+                self.state = 2
             elif self.state is 1:
                 # ramping to a temperature
                 temp = self.temperature_controller.read_temp()
@@ -175,7 +193,14 @@ class MainEventLoop(wx.GUIEventLoop):
                     self.state = 2
 
             elif self.state is 2:
-                self.frame.append_log("executing measurement")
+                # update statuses
+                self.frame.append_log("executing measurement {}".format(self.temp_index+1))
+                temp = self.temperature_controller.read_temp()
+                self.frame.temp_readout.SetValue("current temp {:3.3f}K   Desired {}K".format(temp, self.target_temp))
+                htr_power = self.temperature_controller.query_heater_power()
+                self.frame.heater_readout.SetValue("Heater Power: {:3.2f}%".format(htr_power))
+                self.frame.step_readout.SetValue("Step {} of {}".format(self.temp_index+1, len(temps)))
+
                 # execute measurement
                 # TODO find way to not block thread on reads
                 temperature = 0
@@ -199,6 +224,8 @@ class MainEventLoop(wx.GUIEventLoop):
                     self.file.write(" {},".format(voltage[index]))
                 self.file.write("\n")
                 self.file.flush()
+
+                self.state = 3
 
             elif self.state is 3:
                 # reset machine for next run
@@ -224,10 +251,9 @@ class MainEventLoop(wx.GUIEventLoop):
                 self.frame.temp_readout.SetValue("current temp {:3.3f}K   Desired {}K".format(temp, -1))
                 htr_power = self.temperature_controller.query_heater_power()
                 self.frame.heater_readout.SetValue("Heater Power: {:3.2f}%".format(htr_power))
-                self.frame.step_readout.SetValue("Step {} of {}".format(self.temp_index+1, len(temps)))
+                self.frame.step_readout.SetValue("Step {} of {}".format(self.temp_index, len(temps)))
 
             else:
-                self.frame.clear_log()
                 # uninitialized state
                 # open file
                 self.file = open(fname, 'a+')
@@ -243,7 +269,7 @@ class MainEventLoop(wx.GUIEventLoop):
 
                 self.temperature_controller = VsmTempController(self.frame.instrument_list[self.frame.temp_ID_selector.GetCurrentSelection()], library=library)
                 self.i_source = K2400(self.frame.instrument_list[self.frame.curr_ID_selector.GetCurrentSelection()], library=library, current=0)  # keithley 2400 current source
-                self.nanovoltmeter = K2182A(self.frame.instrument_list[self.frame.volt_ID_selector.GetCurrentSelection()], library=library)  # keithley 2182A
+                self.nanovoltmeter = K2182A(self.frame.instrument_list[self.frame.volt_ID_selector.GetCurrentSelection()], library=library, range=10.0)  # keithley 2182A
                 self.temp_index = 0
                 self.target_temp = temps[self.temp_index]
                 self.state = 0
@@ -326,6 +352,35 @@ class MainEventLoop(wx.GUIEventLoop):
             return False
 
         return self.Dispatch()
+
+
+class Plot(wx.Panel):
+    def __init__(self, parent, id=-1, dpi=None, **kwargs):
+        wx.Panel.__init__(self, parent, id=id, **kwargs)
+        self.figure = mpl.figure.Figure(dpi=dpi, figsize=(2, 2))
+        self.canvas = FigureCanvas(self, -1, self.figure)
+        self.toolbar = NavigationToolbar(self.canvas)
+        self.toolbar.Realize()
+
+        sizer = wx.BoxSizer(wx.VERTICAL)
+        sizer.Add(self.canvas, 1, wx.CENTER)
+        sizer.Add(self.toolbar, 0, wx.CENTER)
+        self.SetSizer(sizer)
+
+
+class PlotNotebook(wx.Panel):
+    def __init__(self, parent, id=-1):
+        wx.Panel.__init__(self, parent, id=id)
+        self.nb = aui.AuiNotebook(self)
+        sizer = wx.BoxSizer()
+        sizer.Add(self.nb, 1, wx.EXPAND)
+        self.SetSizer(sizer)
+
+    def add(self, name="plot"):
+        page = Plot(self.nb)
+        self.nb.AddPage(page, name)
+        return page.figure
+
 
 
 class MyApp(wx.App):
