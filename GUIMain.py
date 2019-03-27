@@ -12,8 +12,8 @@ from matplotlib.backends.backend_wxagg import NavigationToolbar2WxAgg as Navigat
 import wx.lib.agw.aui as aui
 
 # DO NOT MODIFY ON THIS COMPUTER
-library = 'C:\\Windows\\System32\\visa64.dll'
-k_epsilon = 1.0E0  # value used for an approximately equals statement
+library = 'C:/Windows/System32/visa32.dll'
+k_epsilon = 1.0E-1  # value used for an approximately equals statement
 
 def sweep(start, end, step):
     arr = []
@@ -27,23 +27,24 @@ def sweep(start, end, step):
 # Sample name
 sname = "XD393"
 # File to output data to
-fname = "C:/temp/work/{}.csv".format(sname)
+fname = "C:\\Users\\JP-911\\Desktop\\SRO_RVST\\data\\{}.csv".format(sname)
 # Currents in uA
 currents = [10, -10] # 30, -30
 # time between voltage readings in s
 reading_delay = 1.0
 # Temperatures in K
-temps = sweep(80, 300, 20)
+temps = sweep(80, 280, 10)
 # temps = [80]
 # wait for stability in s
-temp_stable_wait = 20 * 60
-# End Temperature in K
-# end_temp = 300
+temp_stable_wait = 8 * 60
+# initial cooldown wait in s
+init_temp_wait = 20 * 60
+
 
 class MyFrame(wx.Frame):
 
     def __init__(self, parent, id, title):
-        wx.Frame.__init__(self, parent, id, title, size=(1300, 600))
+        wx.Frame.__init__(self, parent, id, title, size=(900, 600))
 
         self.res_manager = visa.ResourceManager(library)
         self.instrument_list = self.res_manager.list_resources()
@@ -77,7 +78,7 @@ class MyFrame(wx.Frame):
                                        size=(200, 30), pos=(0, 160), style=wx.CB_READONLY)
 
         self.step_readout = wx.TextCtrl(self.mainpanel, size=(200, 30), pos=(0, 280), style=wx.TE_READONLY, value="Step {} of {}".format(0, 0))
-        self.temp_readout = wx.TextCtrl(self.mainpanel, size=(200, 30), pos=(0, 320), style=wx.TE_READONLY, value="current temp {}K   Desired {}K".format(293, 293))
+        self.temp_readout = wx.TextCtrl(self.mainpanel, size=(200, 30), pos=(0, 320), style=wx.TE_READONLY, value="current temp {}K   Desired {}K".format(280, -1))
         self.heater_readout = wx.TextCtrl(self.mainpanel, size=(200, 30), pos=(0, 360), style=wx.TE_READONLY, value="Heater Power: {:3.2f}%".format(0))
 
         self.connect_button = wx.Button(self.mainpanel, -1, "Test Connections", pos=(50, 190), size=(100, 30))
@@ -104,7 +105,7 @@ class MyFrame(wx.Frame):
             volt.close()
         else:
             self.append_log("Nano-voltmeter not selected")
-        if not self.volt_ID_selector.GetCurrentSelection() == -1:
+        if not self.curr_ID_selector.GetCurrentSelection() == -1:
             curr = self.res_manager.open_resource(self.instrument_list[self.curr_ID_selector.GetCurrentSelection()])
             self.append_log("Current Source ID: " + curr.query("*IDN?"))
             curr.close()
@@ -123,10 +124,13 @@ class MyFrame(wx.Frame):
             self.append_log("Current source not selected")
             instr_select = False
         if not instr_select:
+            self.append_log("One or more instruments were not selected\n"
+                            + "select all instruments before running measurement")
             return
         self.clear_log()
         self.allow_measurement = True
         self.start_button.SetLabel("Stop Measurement")
+        self.start_button.Unbind(wx.EVT_BUTTON, self.run_measurement)
         self.start_button.Bind(wx.EVT_BUTTON, self.stop_measurement)
 
     def append_log(self, to_log: str):
@@ -138,6 +142,7 @@ class MyFrame(wx.Frame):
     def stop_measurement(self, aaa):
         self.allow_measurement = False
         self.start_button.SetLabel("Start Measurement")
+        self.start_button.Unbind(wx.EVT_BUTTON, self.stop_measurement)
         self.start_button.Bind(wx.EVT_BUTTON, self.run_measurement)
 
     def OnCloseWindow(self, event):
@@ -191,10 +196,10 @@ class MainEventLoop(wx.GUIEventLoop):
                     self.frame.append_log("Temperature reached, waiting for stability")
                     if self.temp_index < 1:
                         # on initial cooldown wait a bit longer for adjustments
-                        self.t_done = time.time() + temp_stable_wait
+                        self.t_done = time.time() + init_temp_wait
                     else:
-                        self.t_done = time.time() + temp_stable_wait / 2
-                    self.frame.append_log("measurement will start at {}".format(time.strftime("%H:%M:%S +0000", time.localtime(self.t_done))))
+                        self.t_done = time.time() + temp_stable_wait
+                    self.frame.append_log("measurement will start at {}".format(time.strftime("%H:%M:%S", time.localtime(self.t_done))))
                     self.blocked = True
                 if self.blocked and self.t_done < time.time():
                     # ready to advance state into measurement
@@ -233,7 +238,8 @@ class MainEventLoop(wx.GUIEventLoop):
                 self.file.write("\n")
                 self.file.flush()
 
-                self.frame.append_log("Measurement {} complete".format(self.temp_index+1))
+                self.frame.append_log("Measurement {} complete at {}".format(self.temp_index+1,
+                                         time.strftime("%H:%M:%S", time.localtime(time.time()))))
 
                 self.state = 3
 
@@ -257,7 +263,7 @@ class MainEventLoop(wx.GUIEventLoop):
 
             elif self.state is 5:
                 # idle state post measurement
-                self.frame.append_log("Measurement complete\nSee data file for results")
+                self.frame.append_log("Measurement complete at {}\nSee data file for results".format(time.strftime("%H:%M:%S", time.localtime(time.time()))))
                 temp = self.temperature_controller.read_temp()
                 self.frame.temp_readout.SetValue("current temp {:3.3f}K   Desired {}K".format(temp, -1))
                 htr_power = self.temperature_controller.query_heater_power()
@@ -286,13 +292,15 @@ class MainEventLoop(wx.GUIEventLoop):
                 self.state = 0
                 self.historic = True
                 self.frame.append_log("drivers loaded succesfully")
+                self.frame.append_log("earliest possible finish time will be {}".format(time.strftime(
+                    "%m/%d/%y at %H:%M:%S", time.localtime(time.time() + init_temp_wait + len(temps) * temp_stable_wait))))
 
         elif self.historic:
             # measurement done shut everything off
             self.temperature_controller.temp_sel_set(600)
             self.temperature_controller.set_controller_enable(False)
             self.i_source.enable(False)
-            self.frame.step_readout.SetValue("Step {} of {}".format(0, 0))
+            self.frame.step_readout.SetValue("Step {} of {} Paused".format(0, 0))
             # self.state = 5
             self.historic = False
 
