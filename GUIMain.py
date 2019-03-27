@@ -1,3 +1,5 @@
+import datetime
+
 import wx
 import visa
 import time
@@ -23,17 +25,18 @@ def sweep(start, end, step):
     return arr
 
 # Sample name
-sname = "XD326"
+sname = "XD393"
 # File to output data to
-fname = "C:/temp/work/{}RANDOM_RESISTOR.csv".format(sname)
+fname = "C:/temp/work/{}.csv".format(sname)
 # Currents in uA
-currents = [3, -3] # 30, -30
+currents = [10, -10] # 30, -30
 # time between voltage readings in s
 reading_delay = 1.0
 # Temperatures in K
 temps = sweep(80, 300, 20)
+# temps = [80]
 # wait for stability in s
-temp_stable_wait = 2 * 60
+temp_stable_wait = 20 * 60
 # End Temperature in K
 # end_temp = 300
 
@@ -164,7 +167,7 @@ class MainEventLoop(wx.GUIEventLoop):
         self.historic = False
         self.init_ready = False
         self.state = -1
-        self.t_arrived = float("inf")
+        self.t_done = float("inf")
         self.temp_index = 0
 
         # Adjust currents from uA to A
@@ -173,32 +176,37 @@ class MainEventLoop(wx.GUIEventLoop):
     def update_experiment(self):
         if self.frame.allow_measurement:
             if self.state is 0:
-                self.frame.append_log("setting temperature to {}K".format(self.target_temp))
-                # self.temperature_controller.set_controller_enable(True)
-                # self.temperature_controller.temp_sel_set(self.target_temp)
-                # TODO SET BACK TO STATE 1 AFTER TEMP SET
-                self.state = 2
+                self.frame.append_log("Setting temperature to {}K".format(self.target_temp))
+                self.temperature_controller.set_controller_enable(True)
+                self.temperature_controller.temp_sel_set(self.target_temp)
+                self.state = 1
             elif self.state is 1:
                 # ramping to a temperature
                 temp = self.temperature_controller.read_temp()
-                self.frame.temp_readout.SetValue("current temp {:3.3f}K   Desired {}K".format(temp, self.target_temp))
+                self.frame.temp_readout.SetValue("Current {:3.3f}K   Desired {}K".format(temp, self.target_temp))
                 htr_power = self.temperature_controller.query_heater_power()
                 self.frame.heater_readout.SetValue("Heater Power: {:3.2f}%".format(htr_power))
                 self.frame.step_readout.SetValue("Step {} of {}".format(self.temp_index+1, len(temps)))
                 if not (temp < self.target_temp - k_epsilon or temp > self.target_temp + k_epsilon) and not self.blocked:
-                    self.t_arrived = time.time()
+                    self.frame.append_log("Temperature reached, waiting for stability")
+                    if self.temp_index < 1:
+                        # on initial cooldown wait a bit longer for adjustments
+                        self.t_done = time.time() + temp_stable_wait
+                    else:
+                        self.t_done = time.time() + temp_stable_wait / 2
+                    self.frame.append_log("measurement will start at {}".format(time.strftime("%H:%M:%S +0000", time.localtime(self.t_done))))
                     self.blocked = True
-                if self.blocked and self.t_arrived + temp_stable_wait < time.time():
+                if self.blocked and self.t_done < time.time():
                     # ready to advance state into measurement
                     self.state = 2
 
             elif self.state is 2:
                 # update statuses
-                self.frame.append_log("executing measurement {}".format(self.temp_index+1))
+                self.frame.append_log("Executing measurement {}".format(self.temp_index+1))
                 temp = self.temperature_controller.read_temp()
                 self.frame.temp_readout.SetValue("current temp {:3.3f}K   Desired {}K".format(temp, self.target_temp))
                 htr_power = self.temperature_controller.query_heater_power()
-                self.frame.heater_readout.SetValue("Heater Power: {:3.2f}%".format(htr_power))
+                self.frame.heater_readout.SetValue("Heater Power: {:3.1f}%".format(htr_power))
                 self.frame.step_readout.SetValue("Step {} of {}".format(self.temp_index+1, len(temps)))
 
                 # execute measurement
@@ -225,6 +233,8 @@ class MainEventLoop(wx.GUIEventLoop):
                 self.file.write("\n")
                 self.file.flush()
 
+                self.frame.append_log("Measurement {} complete".format(self.temp_index+1))
+
                 self.state = 3
 
             elif self.state is 3:
@@ -247,6 +257,7 @@ class MainEventLoop(wx.GUIEventLoop):
 
             elif self.state is 5:
                 # idle state post measurement
+                self.frame.append_log("Measurement complete\nSee data file for results")
                 temp = self.temperature_controller.read_temp()
                 self.frame.temp_readout.SetValue("current temp {:3.3f}K   Desired {}K".format(temp, -1))
                 htr_power = self.temperature_controller.query_heater_power()
@@ -282,7 +293,7 @@ class MainEventLoop(wx.GUIEventLoop):
             self.temperature_controller.set_controller_enable(False)
             self.i_source.enable(False)
             self.frame.step_readout.SetValue("Step {} of {}".format(0, 0))
-            self.state = 5
+            # self.state = 5
             self.historic = False
 
 

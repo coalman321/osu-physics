@@ -30,8 +30,7 @@ class VsmTempController:
         ramp_enable = 0  # enable or disable temperature ramping: 0 = off, 1 = on
         ramp_rate = 10  # Ramp rate in degrees kelvin per minute
         self.temp_controller.write("RAMP {}, {}, {}".format(self.loop, ramp_enable, ramp_rate))
-        heater_range = 5
-        self.temp_controller.write("RANGE {}".format(heater_range))
+        time.sleep(0.5)
         self.temp_sel_set(600)  # zeroes PID Values and disables heater
 
     # setpoint in kelvin, Loop can be either 0 or 1
@@ -92,6 +91,8 @@ class VsmTempController:
         controller_state = 1 if enable else 0  # 0 is off, 1 is on -- DEFAULT OFF
         self.temp_controller.write("CSET {}, {}, {}, {}, {}".format(self.loop, sensor_input,
                                                                     controller_units, controller_state, self.penable))
+        time.sleep(0.5)
+        self.temp_controller.write("RANGE {}".format(5))
     #  Read in kelvin, Sensor can be either A or B
     def read_temp(self, sensor="A"):
         """
