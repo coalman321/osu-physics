@@ -2,10 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="6baa946a-1f17-48e3-b3c2-9ae0410a1625" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/GUIMain.py" beforeDir="false" afterPath="$PROJECT_DIR$/GUIMain.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/text-based-interactives/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/notempmain.py" beforeDir="false" afterPath="$PROJECT_DIR$/text-based-interactives/notempmain.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -32,26 +29,28 @@
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
           <entry key="GUIMain" value="72" />
-          <entry key="Python Console" value="114" />
+          <entry key="Python Console" value="526" />
           <entry key="dummy" value="66" />
-          <entry key="py" value="21829" />
+          <entry key="py" value="22726" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
           <entry key="PLAIN_TEXT" value="66" />
-          <entry key="Python" value="22015" />
+          <entry key="Python" value="23324" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
         <counts>
           <entry key="GUIMain" value="1" />
           <entry key="cfg" value="1" />
+          <entry key="png" value="5" />
           <entry key="py" value="8" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.open">
         <counts>
+          <entry key="Image" value="5" />
           <entry key="PLAIN_TEXT" value="1" />
           <entry key="Python" value="9" />
         </counts>
@@ -83,13 +82,14 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/GUIMain.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="160">
-              <caret line="267" column="53" selection-start-line="267" selection-start-column="53" selection-end-line="267" selection-end-column="53" />
+            <state relative-caret-position="177">
+              <caret line="260" column="52" selection-start-line="260" selection-start-column="52" selection-end-line="260" selection-end-column="52" />
               <folding>
                 <element signature="e#0#9#0" expanded="true" />
-                <marker date="1554311445935" expanded="true" signature="185:382" ph="..." />
-                <marker date="1554311445935" expanded="true" signature="12219:12780" ph="..." />
-                <marker date="1554311445935" expanded="true" signature="12804:12810" ph="..." />
+                <marker date="1554317237131" expanded="true" signature="232:429" ph="..." />
+                <marker date="1554317237131" expanded="true" signature="13035:13192" ph="..." />
+                <marker date="1554317237131" expanded="true" signature="14092:14287" ph="..." />
+                <marker date="1554317237131" expanded="true" signature="14311:14317" ph="..." />
               </folding>
             </state>
           </provider>
@@ -298,6 +298,7 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-7" y="-7" width="1550" height="878" extended-state="6" />
+    <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" sideWeight="0.4973545" visible="true" weight="0.17052214" />
       <window_info id="Structure" order="1" sideWeight="0.5026455" side_tool="true" weight="0.17052214" />
@@ -312,7 +313,7 @@
       <window_info anchor="bottom" id="Version Control" order="7" />
       <window_info anchor="bottom" id="Terminal" order="8" weight="0.32885906" />
       <window_info anchor="bottom" id="Event Log" order="9" side_tool="true" />
-      <window_info anchor="bottom" id="Python Console" order="10" weight="0.32791328" />
+      <window_info anchor="bottom" id="Python Console" order="10" weight="0.32751676" />
       <window_info anchor="right" id="Commander" order="0" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
@@ -408,15 +409,22 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/num.png">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lastgraph.png">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
     <entry file="file://$PROJECT_DIR$/GUIMain.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="160">
-          <caret line="267" column="53" selection-start-line="267" selection-start-column="53" selection-end-line="267" selection-end-column="53" />
+        <state relative-caret-position="177">
+          <caret line="260" column="52" selection-start-line="260" selection-start-column="52" selection-end-line="260" selection-end-column="52" />
           <folding>
             <element signature="e#0#9#0" expanded="true" />
-            <marker date="1554311445935" expanded="true" signature="185:382" ph="..." />
-            <marker date="1554311445935" expanded="true" signature="12219:12780" ph="..." />
-            <marker date="1554311445935" expanded="true" signature="12804:12810" ph="..." />
+            <marker date="1554317237131" expanded="true" signature="232:429" ph="..." />
+            <marker date="1554317237131" expanded="true" signature="13035:13192" ph="..." />
+            <marker date="1554317237131" expanded="true" signature="14092:14287" ph="..." />
+            <marker date="1554317237131" expanded="true" signature="14311:14317" ph="..." />
           </folding>
         </state>
       </provider>

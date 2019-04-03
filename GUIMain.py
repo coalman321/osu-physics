@@ -6,7 +6,9 @@ import time
 from vsm_temp_controller import VsmTempController
 from k2400_isource import K2400
 from k2182A_nvmeter import K2182A
-import matplotlib as mpl
+import matplotlib
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt
 
 
 def sweep(start, end, step):
@@ -27,7 +29,7 @@ k_epsilon = 1.0E-1  # value used for an approximately equals statement
 class MyFrame(wx.Frame):
 
     def __init__(self, parent, id, title):
-        wx.Frame.__init__(self, parent, id, title, size=(900, 600))
+        wx.Frame.__init__(self, parent, id, title, size=(900, 700))
 
         self.CenterOnScreen()
 
@@ -42,16 +44,17 @@ class MyFrame(wx.Frame):
         self.page_menu.Bind(wx.EVT_MENU, self.show_main_menu, self.main_menu_select)
         self.config_menu_select = self.page_menu.Append(wx.NewId(), "Configuration Menu", "Configuration menu")
         self.page_menu.Bind(wx.EVT_MENU, self.show_config_menu, self.config_menu_select)
-        # self.graph_menu_select = self.page_menu.Append(wx.NewId(), "Live Graph", "Live updated graph")
+        self.graph_menu_select = self.page_menu.Append(wx.NewId(), "Live Graph", "Live updated graph")
+        self.page_menu.Bind(wx.EVT_MENU, self.show_graph_menu, self.graph_menu_select)
         self.menu_bar.Append(self.page_menu, "&Menu")
         self.SetMenuBar(self.menu_bar)
 
         # setup measurement panel & log
         self.main_panel = wx.Panel(self)
-        self.main_panel.SetSize(size=(900, 600))
+        self.main_panel.SetSize(size=(900, 700))
         self.main_panel.Show(True)
 
-        self.main_header = wx.StaticText(self.main_panel, label="R vs. T Measurement Interface", pos=(10, 0))
+        self.main_header = wx.StaticText(self.main_panel, label="R vs. T Measurement Interface", pos=(250, 0))
         font = self.main_header.GetFont()
         font.PointSize += 10
         self.main_header.SetFont(font)
@@ -80,7 +83,7 @@ class MyFrame(wx.Frame):
 
         # setup configuration panel
         self.config_panel = wx.Panel(self)
-        self.config_panel.SetSize(size=(900, 600))
+        self.config_panel.SetSize(size=(900, 700))
         self.config_panel.Show(False)
 
         self.config_header = wx.StaticText(self.config_panel, label="Measurement Configuration", pos=(300, 0))
@@ -114,6 +117,26 @@ class MyFrame(wx.Frame):
         wx.StaticText(self.config_panel, label="Measurement\nwait time (s)", pos=(650, 170))
         self.user_measure_delay = wx.TextCtrl(self.config_panel, size=(100, 25), pos=(650, 205), value="1.00")
 
+        # setup image panel for a live graph
+        self.graph_panel = wx.Panel(self)
+        self.graph_panel.SetSize(size=(900, 700))
+        self.graph_panel.Show(False)
+
+        self.graph_header = wx.StaticText(self.graph_panel, label="Live updated graph", pos=(325, 0))
+        font = self.graph_header.GetFont()
+        font.PointSize += 8
+        self.graph_header.SetFont(font)
+
+        # setup image viewer for "live" graph
+        plt.title("R vs T")
+        plt.xlabel("Temperature (K)")
+        plt.ylabel("Resistance (ohms)")
+        self.r_vs_t = plt.plot([0],[0])
+        plt.savefig("lastgraph.png")
+        self.graph = wx.StaticBitmap(self.graph_panel, -1,
+                                     wx.Bitmap("{}\\lastgraph.png".format(os.getcwd()), wx.BITMAP_TYPE_ANY),
+                                     size=(700, 700), pos=(110, 35))
+        self.graph.SetBitmap(wx.Bitmap("{}\\lastgraph.png".format(os.getcwd()), wx.BITMAP_TYPE_ANY))
 
         # pre-measurement setup
         self.temps = []
@@ -235,16 +258,26 @@ class MyFrame(wx.Frame):
 
     def update_sample_name(self, sample_name):
         self.sample_ID.SetValue("Sample ID: {}".format(sample_name))
+        plt.title("R vs T for {}".format(sample_name))
+        self.update_plot_data([0], [0])
 
     def show_main_menu(self, aaaaa):
         if not self.main_panel.IsShown():
             self.main_panel.Show()
             self.config_panel.Hide()
+            self.graph_panel.Hide()
 
     def show_config_menu(self, aaaaa):
         if not self.config_panel.IsShown():
-            self.main_panel.Hide()
             self.config_panel.Show()
+            self.main_panel.Hide()
+            self.graph_panel.Hide()
+
+    def show_graph_menu(self, aaaaa):
+        if not self.graph_panel.IsShown():
+            self.graph_panel.Show()
+            self.config_panel.Hide()
+            self.main_panel.Hide()
 
     def on_browse(self, aaaaa):
         file_dialog = wx.DirDialog(self,  "Select data file directory", "", wx.DD_DEFAULT_STYLE | wx.DD_DIR_MUST_EXIST)
@@ -263,6 +296,11 @@ class MyFrame(wx.Frame):
         self.user_init_delay.SetEditable(not lock)
         self.user_other_delay.SetEditable(not lock)
         self.user_browse.Enable(not lock)
+
+    def update_plot_data(self, temps, resistances):
+        self.r_vs_t = plt.plot(temps, resistances)
+        plt.savefig("lastgraph.png")
+        self.graph.SetBitmap(wx.Bitmap("{}\\lastgraph.png".format(os.getcwd()), wx.BITMAP_TYPE_ANY))
 
     # def save_config(self):
 
@@ -325,6 +363,8 @@ class MainEventLoop(wx.GUIEventLoop):
         self.state = -1
         self.t_done = float("inf")
         self.temp_index = 0
+        self.temp_data = []
+        self.resistance_data = []
 
     def update_experiment(self):
         if self.frame.allow_measurement:
@@ -377,6 +417,11 @@ class MainEventLoop(wx.GUIEventLoop):
                 # Calculate resistance and voltage average
                 temp_avg = temperature / len(self.frame.currents)
                 res_avg = resistance / len(self.frame.currents)
+
+                # update live graph
+                self.temp_data.append(temp_avg)
+                self.resistance_data.append(res_avg)
+                self.frame.update_plot_data(self.temp_data, self.resistance_data)
 
                 # Update data file
                 self.file.write("{}, {},".format(res_avg, temp_avg))
